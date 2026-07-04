@@ -1,6 +1,6 @@
 import { and, eq, inArray, like, or, sql } from "drizzle-orm";
 import { db } from "@/lib/db/client";
-import { ingredients, recipeTags, recipes, tags } from "@/lib/db/schema";
+import { ingredients, photos, recipeTags, recipes, tags } from "@/lib/db/schema";
 import { normalizeIngredientName } from "@/lib/ocr/normalize-ingredient-name";
 import type { Recipe, RecipeInput, RecipePantryMatch } from "@/types/recipe";
 
@@ -34,10 +34,18 @@ function loadRecipe(recipeId: number): Recipe {
     .where(eq(recipeTags.recipeId, recipeId))
     .all();
 
+  const photoRows = db
+    .select({ id: photos.id, storageKey: photos.storageKey, position: photos.position })
+    .from(photos)
+    .where(eq(photos.recipeId, recipeId))
+    .orderBy(photos.position)
+    .all();
+
   return {
     ...recipeRow,
     ingredients: ingredientRows,
     tags: tagRows,
+    photos: photoRows,
   };
 }
 
@@ -76,6 +84,10 @@ export function createRecipe(input: RecipeInput): Recipe {
         .values(input.tagIds.map((tagId) => ({ recipeId: inserted.id, tagId })))
         .run();
     }
+
+    input.photoStorageKeys?.forEach((storageKey, position) => {
+      tx.insert(photos).values({ recipeId: inserted.id, storageKey, position }).run();
+    });
 
     return inserted.id;
   });

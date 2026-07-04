@@ -10,9 +10,10 @@ interface Props {
   allTags: Tag[];
   recipeId?: number;
   initialValues?: Partial<RecipeInput>;
+  photoStorageKeys?: string[];
 }
 
-export function RecipeForm({ allTags: initialAllTags, recipeId, initialValues }: Props) {
+export function RecipeForm({ allTags: initialAllTags, recipeId, initialValues, photoStorageKeys }: Props) {
   const router = useRouter();
   const [allTags, setAllTags] = useState(initialAllTags);
   const [title, setTitle] = useState(initialValues?.title ?? "");
@@ -68,6 +69,7 @@ export function RecipeForm({ allTags: initialAllTags, recipeId, initialValues }:
       hasSpecialIngredients,
       ingredients: cleanedIngredients,
       tagIds: [...mealTypeTagIds, ...foodCategoryTagIds],
+      photoStorageKeys,
     };
 
     setSubmitting(true);

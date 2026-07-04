@@ -23,6 +23,7 @@ export interface RecipeInput {
   hasSpecialIngredients: boolean;
   ingredients: IngredientInput[];
   tagIds: number[];
+  photoStorageKeys?: string[];
 }
 
 export interface Recipe {
@@ -48,6 +49,7 @@ export interface Recipe {
     normalizedName: string;
   }[];
   tags: Tag[];
+  photos: { id: number; storageKey: string; position: number }[];
 }
 
 export interface RecipePantryMatch {

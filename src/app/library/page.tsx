@@ -63,7 +63,7 @@ export default async function LibraryPage({
           <Link href="/pantry" className="underline">
             What can I cook?
           </Link>
-          <Link href="/recipes/new/manual" className="underline">
+          <Link href="/recipes/new" className="underline">
             + Add recipe
           </Link>
         </div>

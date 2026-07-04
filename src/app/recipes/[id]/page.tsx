@@ -23,6 +23,15 @@ export default async function RecipeDetailPage({
 
       {recipe.sourceText && <p className="text-sm opacity-70">{recipe.sourceText}</p>}
 
+      {recipe.photos.length > 0 && (
+        // eslint-disable-next-line @next/next/no-img-element
+        <img
+          src={`/api/photos/${recipe.photos[0].storageKey}`}
+          alt={recipe.title}
+          className="rounded-lg border"
+        />
+      )}
+
       <div className="flex gap-4 text-sm opacity-80">
         {recipe.prepTimeMinutes != null && <span>Prep: {recipe.prepTimeMinutes} min</span>}
         {recipe.cookTimeMinutes != null && <span>Cook: {recipe.cookTimeMinutes} min</span>}
