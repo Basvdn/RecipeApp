@@ -71,3 +71,28 @@ export const recipeTags = sqliteTable(
   },
   (table) => [primaryKey({ columns: [table.recipeId, table.tagId] })]
 );
+
+export const foodEntries = sqliteTable("food_entries", {
+  id: integer("id").primaryKey({ autoIncrement: true }),
+  // Local calendar day the food was eaten on (YYYY-MM-DD), as seen by the user's device.
+  date: text("date").notNull(),
+  meal: text("meal", { enum: ["breakfast", "lunch", "dinner", "snack"] }).notNull(),
+  name: text("name").notNull(),
+  quantity: text("quantity"),
+  calories: integer("calories").notNull(),
+  proteinG: integer("protein_g").notNull(),
+  carbsG: integer("carbs_g").notNull(),
+  fatG: integer("fat_g").notNull(),
+  createdAt: text("created_at")
+    .notNull()
+    .default(sql`(current_timestamp)`),
+});
+
+// Single-row table (id = 1) holding the daily targets.
+export const nutritionGoals = sqliteTable("nutrition_goals", {
+  id: integer("id").primaryKey(),
+  calories: integer("calories").notNull(),
+  proteinG: integer("protein_g").notNull(),
+  carbsG: integer("carbs_g").notNull(),
+  fatG: integer("fat_g").notNull(),
+});

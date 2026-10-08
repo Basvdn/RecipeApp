@@ -15,6 +15,14 @@ npm run dev
 
 Open http://localhost:3000 — it redirects to the recipe library.
 
+The **Food** tab (calorie & macro tracker) needs a Claude API key. Create `.env.local` with:
+
+```bash
+ANTHROPIC_API_KEY=sk-ant-...
+```
+
+Everything else works without it.
+
 Data lives in `data/recipes.db` (SQLite) and `data/photos/` (uploaded cookbook photos). Both are
 gitignored; back them up yourself if you care about the data (e.g. copy the `data/` folder).
 
@@ -35,6 +43,26 @@ This is a mobile-first PWA. To install it on your iPhone's home screen:
 "Add" → "Scan from a cookbook photo" → take/choose a photo → OCR runs in the browser (10-20s) →
 review screen shows the photo next to the extracted title/ingredients/times so you can fix
 anything OCR got wrong → Save. The scan is never saved automatically without this review step.
+
+## Tracking calories and macros
+
+The **Food** tab is a chat: type or tap the mic and say what you ate ("two scrambled eggs on
+toast and a flat white", "a handful of almonds as a snack"). Claude estimates calories, protein,
+carbs and fat for each food, logs them, and replies with the running total. You can correct it
+the same way ("actually it was one slice", "remove the almonds"), set targets ("my goal is
+2200 calories and 160 g protein"), or ask questions ("how much protein do I have left?").
+
+- Above the chat: the day's totals against your goals, and entries grouped by meal (tap × to
+  remove one). Use ‹ › to look at earlier days; anything you say while viewing a past day is
+  logged to that day unless you name another one.
+- Numbers are Claude's estimates from typical nutrition data, not a database lookup — for
+  packaged food, saying the label values ("protein bar, 210 kcal, 20 g protein") gets exact
+  numbers logged.
+- Voice input uses the browser's built-in speech recognition (Safari on iOS, Chrome). The mic
+  button is hidden where it isn't available.
+- Code: `src/lib/nutrition/assistant.ts` (prompt, tools, tool loop),
+  `src/lib/repositories/foodLog.ts` (data), `src/components/food/` (UI). It uses
+  `claude-opus-5-5` at `medium` effort, with server-side refusal fallback enabled.
 
 ## Moving to the cloud later
 
@@ -58,7 +86,7 @@ using a community reverse-engineered AH API is a possible later enhancement.
 ## Testing
 
 ```bash
-npm test     # unit tests for the OCR parsing logic (src/lib/ocr/parse-recipe.test.ts)
+npm test     # unit tests: OCR parsing, and the food assistant's tool loop (with a scripted fake Claude)
 npm run lint
 ```
 
